@@ -1,0 +1,42 @@
+body{
+    margin: 0px auto;
+    text-align: center;
+}
+h1{
+    font-size: 50px;
+}
+
+div#chats{
+    margin: 0px auto;
+    width: 600px;
+    height: 350px;
+    border: 2px solid black;
+    text-align: left;
+    overflow-y: auto;
+}
+
+form{
+    margin: 0px auto;
+    text-align: center;
+    width: 600px;
+    height: 500px;
+}
+
+textarea{
+    width: 600px;
+    height: 40px;
+    margin: 0px auto;
+    text-align: left;
+    margin-top: 15px;
+    border: 2px solid black;
+    position: relative;
+    right: 5px;
+}
+input{
+    height: 25px;
+    width: 150px;
+    margin-top: 10px;
+    position: relative;
+    left: 228px;
+    border: 2px solid black;
+}
