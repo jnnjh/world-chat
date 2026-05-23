@@ -13,7 +13,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 //SET STATIC FOLDER
-app.use(express.static(__dirname + "/static"));
+app.use(express.static(path.join(__dirname, "static")));
 
 app.set('view engine', 'ejs');
 
@@ -45,6 +45,8 @@ io.on("connection", (socket) => {
     })
 });
 
-const PORT = 3001 || process.env.PORT;
+const PORT = process.env.PORT || 3001;
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);
