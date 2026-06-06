@@ -2,29 +2,33 @@ const path = require("path");
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
+const cors = require("cors");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
-
-var users = {};
-const lastSeen = {};
-var messages = [];
-
-//SET STATIC FOLDER
-app.use(express.static(path.join(__dirname, "static")));
-app.set('view engine', 'ejs');
-app.get('/', function(req, res) {
-    res.render('index');
+const io = socketio(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
 });
 
+const users = {};
+const lastSeen = {};
+const messages = [];
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "static")));
+app.set('view engine', 'ejs');
+app.get("/", (req, res) => {
+    res.render("index");
+});
 
 io.on("connection", (socket) => {
     socket.emit("chat_history", messages);
-
     socket.on("new_user", (name) => {
         const now = Date.now();
-
         const shouldAnnounce =
             !lastSeen[name] ||
             now - lastSeen[name] > 10 * 60 * 1000; // 10 minutes so 
