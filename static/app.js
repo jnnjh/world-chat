@@ -1,44 +1,76 @@
-
 const socket = io();
 
-var name = prompt("Enter your name:");
+let username = localStorage.getItem("chatUsername");
 
-socket.emit('new_user', name);
-
-socket.on('user_connected', (data) => {
-    console.log('user connected: ' + data);
-})
-
-socket.on('chat_history', (messages) => {
-    for(var i = 0; i < messages.length; i++){
-        const p = document.createElement("p");
-        const box = document.getElementById('chats')
-        p.innerHTML = messages[i];
-        box.appendChild(p);
+if (!username) {
+    username = prompt("Enter your name:");
+    while (!username || !username.trim()) {
+        username = prompt("Enter your name:");
     }
-})
+    localStorage.setItem("chatUsername", username);
+}
+socket.emit("new_user", username);
 
-socket.on('broadcast_message', (data) => {
-    console.log(data);
+document.getElementById("welcome-user").textContent = `👋 Welcome back, ${username}`;
+
+function scrollToBottom() {
+    const chats = document.getElementById("chats");
+    chats.scrollTop = chats.scrollHeight;
+}
+
+function createMessageElement(data) {
     const p = document.createElement("p");
-    const box = document.getElementById('chats')
-    
-    p.innerHTML = data.user + ':     ' + data.message;
-    p.style.fontSize = 16 + "px";
-    box.appendChild(p);
-})
+    p.textContent = `[${data.timestamp}] ${data.user}: ${data.message}`;
+    if (data.user === username) {
+        p.classList.add("my-message");
+    }
+    return p;
+}
 
-document.addEventListener("DOMContentLoaded", function (event) {
-    console.log("DOM fully loaded and parsed");
+socket.on("chat_history", (messages) => {
+    const box = document.getElementById("chats");
+    messages.forEach((msg) => {
+        box.appendChild(createMessageElement(msg));
+    });
+    scrollToBottom();
+});
 
-    const chatbox = document.getElementById('guess');
+socket.on("broadcast_message", (data) => {
+    document
+        .getElementById("chats")
+        .appendChild(createMessageElement(data));
 
-    chatbox.addEventListener('submit', (e) => {
-        e.preventDefault()
+    scrollToBottom();
+});
 
-        const message = document.getElementById('chat').value
+socket.on("user_connected", (data) => {
+    const p = document.createElement("p");
+    p.classList.add("system-message");
+    p.textContent = `🟢 ${data.user} joined the chat`;
+    document.getElementById("chats").appendChild(p);
+    scrollToBottom();
+});
 
-        socket.emit('new_message', message);
-        chatbox.reset();
-    })
+socket.on("user_count", (count) => {
+    document.getElementById("online-count").textContent = `👥 ${count} online`;
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("guess");
+    const input = document.getElementById("chat");
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const message = input.value.trim();
+        if (!message) return;
+        socket.emit("new_message", message);
+        form.reset();
+    });
 });

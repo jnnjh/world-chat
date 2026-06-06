@@ -2,51 +2,68 @@ const path = require("path");
 const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
-var users = [];
-var messages = [];
 
-//RUN EXPRESS SERVER
 const app = express();
-//RUN SERVER USING HTTP MODULE REQUIRED BY SOCKET.IO
 const server = http.createServer(app);
-//INIT SOCKET.IO
 const io = socketio(server);
+
+var users = {};
+const lastSeen = {};
+var messages = [];
 
 //SET STATIC FOLDER
 app.use(express.static(path.join(__dirname, "static")));
-
 app.set('view engine', 'ejs');
-
 app.get('/', function(req, res) {
     res.render('index');
 });
 
 
-//RUN WHEN CLIENT CONNECTS
 io.on("connection", (socket) => {
-    //message only to me when I connect
-    socket.emit("message", "Welcome!");
+    socket.emit("chat_history", messages);
 
-    socket.emit('chat_history', messages);
+    socket.on("new_user", (name) => {
+        const now = Date.now();
 
-    socket.on('new_user', (name) => {
+        const shouldAnnounce =
+            !lastSeen[name] ||
+            now - lastSeen[name] > 10 * 60 * 1000; // 10 minutes so 
+
         users[socket.id] = name;
-        console.log(users[socket.id]);
-        io.emit('user_connected', users[socket.id])
-    })
 
-    socket.on('new_message', (message) => {
-        messages[users[socket.id]] = message;
-        io.emit('broadcast_message', {
-            user: users[socket.id],
-            message: messages[users[socket.id]],
-        })
-        messages.push(users[socket.id] + ": " + messages[users[socket.id]]);
-    })
+        if (shouldAnnounce) {
+            io.emit("user_connected", {
+            user: name,
+            timestamp: new Date().toLocaleString(),
+            });
+        }
+        lastSeen[name] = now;
+        io.emit("user_count", Object.keys(users).length);
+    });
+
+    socket.on("new_message", (message) => {
+        if (!message.trim()) return;
+        const chatMessage = {
+        user: users[socket.id],
+        message,
+        timestamp: new Date().toLocaleString(),
+        };
+        messages.push(chatMessage);
+        io.emit("broadcast_message", chatMessage);
+    });
+
+    socket.on("disconnect", () => {
+        const username = users[socket.id];
+        delete users[socket.id];
+        if (username) {
+            lastSeen[username] = Date.now();
+        }
+        io.emit("user_count", Object.keys(users).length);
+    });
 });
 
 const PORT = process.env.PORT || 3001;
 
-server.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

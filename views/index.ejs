@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>World Chat</title>
-        <link rel="stylesheet" href="../stylesheets/style.css">
-        <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
-        <script src="app.js"></script>
-
+        <link rel="stylesheet" href="/stylesheets/style.css"/>
+        <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" crossorigin="anonymous"></script>
+        <script defer src="/app.js"></script>
     </head>
     <body>
-        <div id="chats"></div>
-        <form id="guess">
-            <textarea id="chat" placeholder="Enter a message..."></textarea>
-            <input type="submit">
-        </form>
+        <div class="chat-container">
+            <h1>🌍 World Chat</h1>
+            <div id="online-count"> 👥 0 online </div>
+            <div id="welcome-user"></div>
+            <div id="chats"></div>
+            <form id="guess">
+            <textarea id="chat" placeholder="Type your message..." required></textarea>
+            <button type="submit">Send</button>
+            </form>
+        </div>
     </body>
 </html>

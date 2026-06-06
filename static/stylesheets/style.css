@@ -1,42 +1,96 @@
-body{
-    margin: 0px auto;
-    text-align: center;
-}
-h1{
-    font-size: 50px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-div#chats{
-    margin: 0px auto;
-    width: 600px;
-    height: 350px;
-    border: 2px solid black;
-    text-align: left;
-    overflow-y: auto;
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-form{
-    margin: 0px auto;
-    text-align: center;
-    width: 600px;
-    height: 500px;
+.chat-container {
+  width: 800px;
+  max-width: 95%;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
-textarea{
-    width: 600px;
-    height: 40px;
-    margin: 0px auto;
-    text-align: left;
-    margin-top: 15px;
-    border: 2px solid black;
-    position: relative;
-    right: 5px;
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
 }
-input{
-    height: 25px;
-    width: 150px;
-    margin-top: 10px;
-    position: relative;
-    left: 228px;
-    border: 2px solid black;
+
+#online-count {
+  text-align: center;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+#chats {
+  height: 500px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fafafa;
+  margin-bottom: 15px;
+}
+
+#chats p {
+  background: #e8f0fe;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+.system-message {
+  background: transparent !important;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+#guess {
+  display: flex;
+  gap: 10px;
+}
+
+#chat {
+  flex: 1;
+  resize: none;
+  height: 60px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+button {
+  border: none;
+  background: #2563eb;
+  color: white;
+  padding: 0 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.my-message {
+  background: #d1fae5 !important;
+}
+
+#chats p.my-message {
+  background-color: #d1fae5 !important;
 }
